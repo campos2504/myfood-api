@@ -10,18 +10,19 @@ import javax.transaction.Transactional;
 import com.example.myfood.myfoodapi.domain.model.Cozinha;
 import com.example.myfood.myfoodapi.domain.repository.CozinhaRepository;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CozinhaRepositoryImpl implements CozinhaRepository{
+public class CozinhaRepositoryImpl implements CozinhaRepository {
 
     @PersistenceContext
     private EntityManager manager;
 
     @Override
     public List<Cozinha> listar() {
-        
-        TypedQuery<Cozinha> query= manager.createQuery("from Cozinha", Cozinha.class);
+
+        TypedQuery<Cozinha> query = manager.createQuery("from Cozinha", Cozinha.class);
         return query.getResultList();
     }
 
@@ -31,15 +32,17 @@ public class CozinhaRepositoryImpl implements CozinhaRepository{
     }
 
     @Override
-    @Transactional//metodos que modifiacam o bd
+    @Transactional // metodos que modifiacam o bd
     public Cozinha salvar(Cozinha cozinha) {
-        return manager.merge(cozinha);//adiciona e atualiza com id
+        return manager.merge(cozinha);// adiciona e atualiza com id
     }
 
     @Override
     @Transactional
-    public void remover(Cozinha cozinha) {
-        cozinha=this.buscar(cozinha.getId());
+    public void remover(Long id) {
+        Cozinha cozinha = this.buscar(id);
+        if (cozinha == null)
+            throw new EmptyResultDataAccessException(1);
         manager.remove(cozinha);
     }
 }
