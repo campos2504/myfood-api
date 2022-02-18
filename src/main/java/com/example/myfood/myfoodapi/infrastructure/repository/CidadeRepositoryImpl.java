@@ -10,6 +10,7 @@ import javax.transaction.Transactional;
 import com.example.myfood.myfoodapi.domain.model.Cidade;
 import com.example.myfood.myfoodapi.domain.repository.CidadeRepository;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -32,14 +33,16 @@ public class CidadeRepositoryImpl implements CidadeRepository{
 
     @Override
     @Transactional//metodos que modifiacam o bd
-    public Cidade salvar(Cidade Cidade) {
-        return manager.merge(Cidade);//adiciona e atualiza com id
+    public Cidade salvar(Cidade cidade) {
+        return manager.merge(cidade);//adiciona e atualiza com id
     }
 
     @Override
     @Transactional
-    public void remover(Cidade Cidade) {
-        Cidade=this.buscar(Cidade.getId());
-        manager.remove(Cidade);
+    public void remover(Long id) {
+        Cidade cidade=this.buscar(id);
+        if (cidade == null)
+            throw new EmptyResultDataAccessException(1);
+        manager.remove(cidade);
     }
 }

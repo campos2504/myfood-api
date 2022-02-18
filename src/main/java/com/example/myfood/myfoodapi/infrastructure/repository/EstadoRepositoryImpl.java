@@ -10,6 +10,7 @@ import javax.transaction.Transactional;
 import com.example.myfood.myfoodapi.domain.model.Estado;
 import com.example.myfood.myfoodapi.domain.repository.EstadoRepository;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -32,14 +33,16 @@ public class EstadoRepositoryImpl implements EstadoRepository{
 
     @Override
     @Transactional//metodos que modifiacam o bd
-    public Estado salvar(Estado Estado) {
-        return manager.merge(Estado);//adiciona e atualiza com id
+    public Estado salvar(Estado estado) {
+        return manager.merge(estado);//adiciona e atualiza com id
     }
 
     @Override
     @Transactional
-    public void remover(Estado Estado) {
-        Estado=this.buscar(Estado.getId());
-        manager.remove(Estado);
+    public void remover(Long id) {
+        Estado estado=this.buscar(id);
+        if (estado == null)
+            throw new EmptyResultDataAccessException(1);
+        manager.remove(estado);
     }
 }

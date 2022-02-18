@@ -4,9 +4,9 @@ import java.util.List;
 
 import com.example.myfood.myfoodapi.domain.exception.EntidadeEmUsoException;
 import com.example.myfood.myfoodapi.domain.exception.EntidadeNaoEncontarda;
-import com.example.myfood.myfoodapi.domain.model.Restaurante;
-import com.example.myfood.myfoodapi.domain.repository.RestauranteRepository;
-import com.example.myfood.myfoodapi.domain.service.CadastroRestauranteService;
+import com.example.myfood.myfoodapi.domain.model.Cidade;
+import com.example.myfood.myfoodapi.domain.repository.CidadeRepository;
+import com.example.myfood.myfoodapi.domain.service.CadastroCidadeService;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,37 +22,37 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController//componete controlador rest
-@RequestMapping("/restaurantes")//caminho do request
-public class RestauranteController {
+@RequestMapping("/cidades")//caminho do request
+public class CidadeController {
 
     @Autowired//injeta dependencia
-    private RestauranteRepository restauranteRepository;
+    private CidadeRepository cidadeRepository;
 
     @Autowired
-    private CadastroRestauranteService cadastroRestauranteService;
+    private CadastroCidadeService cadastroCidadeService;
 
     @GetMapping
-    public List<Restaurante> listar() {
-        return restauranteRepository.listar();   
+    public List<Cidade> listar() {
+        return cidadeRepository.listar();   
     }
 
-    @GetMapping("/{restauranteId}")
-    public ResponseEntity<Restaurante> buscar(@PathVariable Long restauranteId) {
-        Restaurante restaurante = restauranteRepository.buscar(restauranteId);
+    @GetMapping("/{cidadeId}")
+    public ResponseEntity<Cidade> buscar(@PathVariable Long cidadeId) {
+        Cidade cidade = cidadeRepository.buscar(cidadeId);
 
-        if (restaurante != null)
-            return ResponseEntity.ok(restaurante);
+        if (cidade != null)
+            return ResponseEntity.ok(cidade);
 
         return ResponseEntity.notFound().build();
     }
 
     @PostMapping
     public ResponseEntity<?> adicionar(
-        @RequestBody Restaurante restaurante) {
+        @RequestBody Cidade cidade) {
         try {
-            restaurante=cadastroRestauranteService.salvar(restaurante);
+            cidade=cadastroCidadeService.salvar(cidade);
             return ResponseEntity.status(HttpStatus.CREATED)
-            .body(restaurante); 
+            .body(cidade); 
 
         } catch (EntidadeNaoEncontarda e) {
             return ResponseEntity.badRequest()
@@ -60,18 +60,18 @@ public class RestauranteController {
         }  
     }
 
-    @PutMapping("/{restauranteId}")
-    public ResponseEntity<?> atualizar(@RequestBody Restaurante restaurante,
-     @PathVariable Long restauranteId) {
+    @PutMapping("/{cidadeId}")
+    public ResponseEntity<?> atualizar(@RequestBody Cidade cidade,
+     @PathVariable Long cidadeId) {
 
         try {
-            Restaurante restauranteAtual= restauranteRepository
-            .buscar(restauranteId);
-            if (restauranteAtual == null)
+            Cidade cidadeAtual= cidadeRepository
+            .buscar(cidadeId);
+            if (cidadeAtual == null)
                 return ResponseEntity.notFound().build();
-            BeanUtils.copyProperties(restaurante, restauranteAtual, "id");
-            cadastroRestauranteService.salvar(restauranteAtual);
-            return ResponseEntity.ok(restauranteAtual);
+            BeanUtils.copyProperties(cidade, cidadeAtual, "id");
+            cadastroCidadeService.salvar(cidadeAtual);
+            return ResponseEntity.ok(cidadeAtual);
             
         } catch (EntidadeNaoEncontarda e) {
             return ResponseEntity.badRequest()
@@ -80,10 +80,11 @@ public class RestauranteController {
 
     }
 
-    @DeleteMapping("/{restauranteId}")
-    public ResponseEntity<Restaurante> remover(@PathVariable Long restauranteId) {
+    @DeleteMapping("/{cidadeId}")
+    public ResponseEntity<Cidade> remover(@PathVariable
+     Long cidadeId) {
         try {
-            cadastroRestauranteService.excluir(restauranteId);
+            cadastroCidadeService.excluir(cidadeId);
             return ResponseEntity.noContent().build();
 
         } catch (EntidadeNaoEncontarda e) {
