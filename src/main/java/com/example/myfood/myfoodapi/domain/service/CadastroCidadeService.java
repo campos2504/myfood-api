@@ -22,19 +22,19 @@ public class CadastroCidadeService {
 
     public Cidade salvar(Cidade cidade) {
         Long EstadoId = cidade.getEstado().getId();
-        Estado Estado = estadoRepository.buscar(EstadoId);
-        if (Estado == null)
-            throw new EntidadeNaoEncontarda(String.format("Não existe cadastro de Estado com código %d", EstadoId));
-
-        cidade.setEstado(Estado);
-        return cidadeRepository.salvar(cidade);
+        Estado estado = estadoRepository.findById(EstadoId)
+        .orElseThrow(()->new EntidadeNaoEncontarda(
+            String.format("Não existe cadastro de Estado com código %d", EstadoId)));
+       
+        cidade.setEstado(estado);
+        return cidadeRepository.save(cidade);
 
     }
 
     public void excluir(Long id) {
         try {
 
-            cidadeRepository.remover(id);
+            cidadeRepository.deleteById(id);
 
         } catch (DataIntegrityViolationException e) {
 

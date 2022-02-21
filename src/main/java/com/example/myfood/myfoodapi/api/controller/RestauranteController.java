@@ -1,6 +1,7 @@
 package com.example.myfood.myfoodapi.api.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.example.myfood.myfoodapi.domain.exception.EntidadeEmUsoException;
 import com.example.myfood.myfoodapi.domain.exception.EntidadeNaoEncontarda;
@@ -33,15 +34,15 @@ public class RestauranteController {
 
     @GetMapping
     public List<Restaurante> listar() {
-        return restauranteRepository.listar();   
+        return restauranteRepository.findAll();   
     }
 
     @GetMapping("/{restauranteId}")
     public ResponseEntity<Restaurante> buscar(@PathVariable Long restauranteId) {
-        Restaurante restaurante = restauranteRepository.buscar(restauranteId);
+        Optional<Restaurante> restaurante = restauranteRepository.findById(restauranteId);
 
-        if (restaurante != null)
-            return ResponseEntity.ok(restaurante);
+        if (restaurante.isPresent())
+            return ResponseEntity.ok(restaurante.get());
 
         return ResponseEntity.notFound().build();
     }
@@ -65,13 +66,13 @@ public class RestauranteController {
      @PathVariable Long restauranteId) {
 
         try {
-            Restaurante restauranteAtual= restauranteRepository
-            .buscar(restauranteId);
-            if (restauranteAtual == null)
+            Optional<Restaurante> restauranteAtual= restauranteRepository
+            .findById(restauranteId);
+            if (restauranteAtual.isEmpty())
                 return ResponseEntity.notFound().build();
-            BeanUtils.copyProperties(restaurante, restauranteAtual, "id");
-            cadastroRestauranteService.salvar(restauranteAtual);
-            return ResponseEntity.ok(restauranteAtual);
+            BeanUtils.copyProperties(restaurante, restauranteAtual.get(), "id");
+            Restaurante restauranteSalvo=cadastroRestauranteService.salvar(restauranteAtual.get());
+            return ResponseEntity.ok(restauranteSalvo);
             
         } catch (EntidadeNaoEncontarda e) {
             return ResponseEntity.badRequest()
@@ -81,7 +82,7 @@ public class RestauranteController {
     }
 
     @DeleteMapping("/{restauranteId}")
-    public ResponseEntity<Restaurante> remover(@PathVariable Long restauranteId) {
+    public ResponseEntity<?> remover(@PathVariable Long restauranteId) {
         try {
             cadastroRestauranteService.excluir(restauranteId);
             return ResponseEntity.noContent().build();
@@ -90,7 +91,7 @@ public class RestauranteController {
             return ResponseEntity.notFound().build();
 
         }catch (EntidadeEmUsoException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
 
     }

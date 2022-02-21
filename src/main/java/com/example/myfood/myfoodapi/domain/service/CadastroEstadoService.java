@@ -17,13 +17,13 @@ public class CadastroEstadoService {
     private EstadoRepository estadoRepository;
 
     public Estado salvar(Estado Estado) {
-        return estadoRepository.salvar(Estado);
+        return estadoRepository.save(Estado);
     }
 
     public void excluir(Long id) {
         try {
 
-            estadoRepository.remover(id);
+            estadoRepository.deleteById(id);
 
         } catch (DataIntegrityViolationException e) {
 

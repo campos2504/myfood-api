@@ -22,19 +22,19 @@ public class CadastroRestauranteService {
 
     public Restaurante salvar(Restaurante restaurante) {
         Long cozinhaId = restaurante.getCozinha().getId();
-        Cozinha cozinha = cozinhaRepository.buscar(cozinhaId);
-        if (cozinha == null)
-            throw new EntidadeNaoEncontarda(String.format("Não existe cadastro de cozinha com código %d", cozinhaId));
+        Cozinha cozinha = cozinhaRepository.findById(cozinhaId)
+                .orElseThrow(() -> new EntidadeNaoEncontarda(
+                        String.format("Não existe cadastro de cozinha com código %d", cozinhaId)));
 
         restaurante.setCozinha(cozinha);
-        return restauranteRepository.salvar(restaurante);
+        return restauranteRepository.save(restaurante);
 
     }
 
     public void excluir(Long id) {
         try {
 
-            restauranteRepository.remover(id);
+            restauranteRepository.deleteById(id);
 
         } catch (DataIntegrityViolationException e) {
 
