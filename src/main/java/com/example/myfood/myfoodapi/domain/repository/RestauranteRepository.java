@@ -15,6 +15,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RestauranteRepository extends JpaRepository<Restaurante, Long>, RestauranteRepositoryQueries{
 
+	@Query("from Restaurante r join fetch r.cozinha")//melhora perfomance fazendo join e nao select
+	List<Restaurante> findAll();
 
 	List<Restaurante> queryByTaxaFreteBetween(BigDecimal taxaInicial, BigDecimal taxaFinal);
 	
