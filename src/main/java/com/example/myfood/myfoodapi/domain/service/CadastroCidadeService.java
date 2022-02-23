@@ -1,10 +1,9 @@
 package com.example.myfood.myfoodapi.domain.service;
 
 import com.example.myfood.myfoodapi.domain.exception.EntidadeEmUsoException;
-import com.example.myfood.myfoodapi.domain.exception.EntidadeNaoEncontarda;
+import com.example.myfood.myfoodapi.domain.exception.EntidadeNaoEncontradaException;
 import com.example.myfood.myfoodapi.domain.model.Estado;
 import com.example.myfood.myfoodapi.domain.model.Cidade;
-import com.example.myfood.myfoodapi.domain.repository.EstadoRepository;
 import com.example.myfood.myfoodapi.domain.repository.CidadeRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,38 +14,48 @@ import org.springframework.stereotype.Service;
 @Service
 public class CadastroCidadeService {
 
+    private static final String MSG_CIDADE_EM_USO = "Cidade de código %d não pode ser removida, pois está em uso";
+
+    private static final String MSG_CIDADE_NAO_ENCONTRADA = "Não existe um cadastro de cidade com código %d";
+
     @Autowired
     private CidadeRepository cidadeRepository;
+
     @Autowired
-    private EstadoRepository estadoRepository;
+    private CadastroEstadoService cadastroEstado;
 
     public Cidade salvar(Cidade cidade) {
-        Long EstadoId = cidade.getEstado().getId();
-        Estado estado = estadoRepository.findById(EstadoId)
-        .orElseThrow(()->new EntidadeNaoEncontarda(
-            String.format("Não existe cadastro de Estado com código %d", EstadoId)));
-       
-        cidade.setEstado(estado);
-        return cidadeRepository.save(cidade);
+        Long estadoId = cidade.getEstado().getId();
 
+        Estado estado = cadastroEstado.buscarOuFalhar(estadoId);
+
+        // Estado estado = estadoRepository.findById(estadoId)
+        // .orElseThrow(() -> new EntidadeNaoEncontradaException(
+        // String.format("Não existe cadastro de estado com código %d", estadoId)));
+
+        cidade.setEstado(estado);
+
+        return cidadeRepository.save(cidade);
     }
 
-    public void excluir(Long id) {
+    public void excluir(Long cidadeId) {
         try {
+            cidadeRepository.deleteById(cidadeId);
 
-            cidadeRepository.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new EntidadeNaoEncontradaException(
+                    String.format(MSG_CIDADE_NAO_ENCONTRADA, cidadeId));
 
         } catch (DataIntegrityViolationException e) {
-
             throw new EntidadeEmUsoException(
-                    String.format("Cidade de codigo %d não pode ser removida, esta em uso",
-                            id));
-        } catch (EmptyResultDataAccessException e) {
-            throw new EntidadeNaoEncontarda(
-                    String.format("Cidade de codigo %d não pode ser encontrada", id));
-
+                    String.format(MSG_CIDADE_EM_USO, cidadeId));
         }
+    }
 
+    public Cidade buscarOuFalhar(Long cidadeId) {
+        return cidadeRepository.findById(cidadeId)
+                .orElseThrow(() -> new EntidadeNaoEncontradaException(
+                        String.format(MSG_CIDADE_NAO_ENCONTRADA, cidadeId)));
     }
 
 }

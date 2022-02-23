@@ -1,7 +1,7 @@
 package com.example.myfood.myfoodapi.domain.service;
 
 import com.example.myfood.myfoodapi.domain.exception.EntidadeEmUsoException;
-import com.example.myfood.myfoodapi.domain.exception.EntidadeNaoEncontarda;
+import com.example.myfood.myfoodapi.domain.exception.EntidadeNaoEncontradaException;
 import com.example.myfood.myfoodapi.domain.model.Estado;
 import com.example.myfood.myfoodapi.domain.repository.EstadoRepository;
 
@@ -13,28 +13,37 @@ import org.springframework.stereotype.Service;
 @Service
 public class CadastroEstadoService {
 
-    @Autowired
-    private EstadoRepository estadoRepository;
+	private static final String MSG_ESTADO_EM_USO 
+		= "Estado de código %d não pode ser removido, pois está em uso";
+	
+	private static final String MSG_ESTADO_NAO_ENCONTRADO 
+		= "Não existe um cadastro de estado com código %d";
+	
+	@Autowired
+	private EstadoRepository estadoRepository;
+	
+	public Estado salvar(Estado estado) {
+		return estadoRepository.save(estado);
+	}
+	
+	public void excluir(Long estadoId) {
+		try {
+			estadoRepository.deleteById(estadoId);
+			
+		} catch (EmptyResultDataAccessException e) {
+			throw new EntidadeNaoEncontradaException(
+				String.format(MSG_ESTADO_NAO_ENCONTRADO, estadoId));
+		
+		} catch (DataIntegrityViolationException e) {
+			throw new EntidadeEmUsoException(
+				String.format(MSG_ESTADO_EM_USO, estadoId));
+		}
+	}
 
-    public Estado salvar(Estado Estado) {
-        return estadoRepository.save(Estado);
-    }
-
-    public void excluir(Long id) {
-        try {
-
-            estadoRepository.deleteById(id);
-
-        } catch (DataIntegrityViolationException e) {
-
-            throw new EntidadeEmUsoException(
-                    String.format("Estado de codigo %d não pode ser removida, esta em usao", id));
-        } catch (EmptyResultDataAccessException e) {
-            throw new EntidadeNaoEncontarda(
-                    String.format("Estado de codigo %d não pode ser encontrada", id));
-
-        }
-
-    }
+	public Estado buscarOuFalhar(Long estadoId) {
+		return estadoRepository.findById(estadoId)
+			.orElseThrow(() -> new EntidadeNaoEncontradaException(
+					String.format(MSG_ESTADO_NAO_ENCONTRADO, estadoId)));
+	}
 
 }
