@@ -2,8 +2,6 @@ package com.example.myfood.myfoodapi.api.controller;
 
 import java.util.List;
 
-import com.example.myfood.myfoodapi.domain.exception.EntidadeNaoEncontradaException;
-import com.example.myfood.myfoodapi.domain.exception.NegocioException;
 import com.example.myfood.myfoodapi.domain.model.Estado;
 import com.example.myfood.myfoodapi.domain.repository.EstadoRepository;
 import com.example.myfood.myfoodapi.domain.service.CadastroEstadoService;
@@ -25,50 +23,43 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/estados") // caminho do request
 public class EstadoController {
 
+
 	@Autowired
 	private EstadoRepository estadoRepository;
-
+	
 	@Autowired
 	private CadastroEstadoService cadastroEstado;
-
+	
 	@GetMapping
 	public List<Estado> listar() {
 		return estadoRepository.findAll();
 	}
-
+	
 	@GetMapping("/{estadoId}")
 	public Estado buscar(@PathVariable Long estadoId) {
 		return cadastroEstado.buscarOuFalhar(estadoId);
 	}
-
+	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public Estado adicionar(@RequestBody Estado estado) {
-		try {
-			return cadastroEstado.salvar(estado);
-		} catch (EntidadeNaoEncontradaException e) {// mudando o codigo http
-			throw new NegocioException(e.getMessage());
-		}
+		return cadastroEstado.salvar(estado);
 	}
-
+	
 	@PutMapping("/{estadoId}")
 	public Estado atualizar(@PathVariable Long estadoId,
 			@RequestBody Estado estado) {
 		Estado estadoAtual = cadastroEstado.buscarOuFalhar(estadoId);
-
+		
 		BeanUtils.copyProperties(estado, estadoAtual, "id");
-
-		try {
-			return cadastroEstado.salvar(estadoAtual);
-		} catch (EntidadeNaoEncontradaException e) {// mudando o codigo http
-			throw new NegocioException(e.getMessage());
-		}
+		
+		return cadastroEstado.salvar(estadoAtual);
 	}
-
+	
 	@DeleteMapping("/{estadoId}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void remover(@PathVariable Long estadoId) {
-		cadastroEstado.excluir(estadoId);
+		cadastroEstado.excluir(estadoId);	
 	}
 
 }

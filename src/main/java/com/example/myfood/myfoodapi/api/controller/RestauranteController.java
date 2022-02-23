@@ -2,6 +2,8 @@ package com.example.myfood.myfoodapi.api.controller;
 
 import java.util.List;
 
+import com.example.myfood.myfoodapi.domain.exception.CozinhaNaoEncontradaException;
+import com.example.myfood.myfoodapi.domain.exception.NegocioException;
 import com.example.myfood.myfoodapi.domain.model.Restaurante;
 import com.example.myfood.myfoodapi.domain.repository.RestauranteRepository;
 import com.example.myfood.myfoodapi.domain.service.CadastroRestauranteService;
@@ -39,26 +41,31 @@ public class RestauranteController {
 		return cadastroRestaurante.buscarOuFalhar(restauranteId);
 	}
 	
-
-	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public Restaurante adicionar(@RequestBody Restaurante restaurante) {
-		return cadastroRestaurante.salvar(restaurante);
+		try {
+			return cadastroRestaurante.salvar(restaurante);
+		} catch (CozinhaNaoEncontradaException e) {
+			throw new NegocioException(e.getMessage());
+		}
 	}
-	
-
 	
 	@PutMapping("/{restauranteId}")
 	public Restaurante atualizar(@PathVariable Long restauranteId,
 			@RequestBody Restaurante restaurante) {
-		Restaurante restauranteAtual = cadastroRestaurante.buscarOuFalhar(restauranteId);
-		
-		BeanUtils.copyProperties(restaurante, restauranteAtual, 
-				"id", "formasPagamento", "endereco", "dataCadastro", "produtos");
-		
-		return cadastroRestaurante.salvar(restauranteAtual);
+		try {
+			Restaurante restauranteAtual = cadastroRestaurante.buscarOuFalhar(restauranteId);
+			
+			BeanUtils.copyProperties(restaurante, restauranteAtual, 
+					"id", "formasPagamento", "endereco", "dataCadastro", "produtos");
+
+			return cadastroRestaurante.salvar(restauranteAtual);
+		} catch (CozinhaNaoEncontradaException e) {
+			throw new NegocioException(e.getMessage());
+		}
 	}
+	
 	
 
     

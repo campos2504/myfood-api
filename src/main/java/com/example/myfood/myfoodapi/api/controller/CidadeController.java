@@ -75,11 +75,5 @@ public class CidadeController {
 		cadastroCidade.excluir(cidadeId);
 	}
 
-	@ExceptionHandler(EntidadeNaoEncontradaException.class)
-    public ResponseEntity<?> tratarEstadoNaoEncontradoExceptino(
-        EntidadeNaoEncontradaException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-            .body(e.getMessage());
-        
-    }
+
 }
