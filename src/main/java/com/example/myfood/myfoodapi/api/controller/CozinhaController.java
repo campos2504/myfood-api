@@ -65,4 +65,7 @@ public class CozinhaController {
 
         cadastroCozinhaService.excluir(cozinhaId);
     }
+
+
+ 
 }
