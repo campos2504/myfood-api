@@ -1,5 +1,7 @@
 package com.example.myfood.myfoodapi.domain.service;
 
+import javax.transaction.Transactional;
+
 import com.example.myfood.myfoodapi.domain.exception.RestauranteNaoEncontradoException;
 import com.example.myfood.myfoodapi.domain.model.Cozinha;
 import com.example.myfood.myfoodapi.domain.model.Restaurante;
@@ -17,6 +19,7 @@ public class CadastroRestauranteService {
 	@Autowired
 	private CadastroCozinhaService cadastroCozinha;
 	
+	@Transactional
 	public Restaurante salvar(Restaurante restaurante) {
 		Long cozinhaId = restaurante.getCozinha().getId();
 		

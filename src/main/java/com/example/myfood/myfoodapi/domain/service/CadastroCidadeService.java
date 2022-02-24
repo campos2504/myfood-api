@@ -1,5 +1,7 @@
 package com.example.myfood.myfoodapi.domain.service;
 
+import javax.transaction.Transactional;
+
 import com.example.myfood.myfoodapi.domain.exception.CidadeNaoEncontradaException;
 import com.example.myfood.myfoodapi.domain.exception.EntidadeEmUsoException;
 import com.example.myfood.myfoodapi.domain.model.Estado;
@@ -22,6 +24,7 @@ public class CadastroCidadeService {
     @Autowired
     private CadastroEstadoService cadastroEstado;
 
+    @Transactional
     public Cidade salvar(Cidade cidade) {
         Long estadoId = cidade.getEstado().getId();
 
@@ -32,6 +35,7 @@ public class CadastroCidadeService {
         return cidadeRepository.save(cidade);
     }
 
+    @Transactional
     public void excluir(Long cidadeId) {
         try {
             cidadeRepository.deleteById(cidadeId);

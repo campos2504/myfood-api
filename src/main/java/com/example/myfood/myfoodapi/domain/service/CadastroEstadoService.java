@@ -1,5 +1,7 @@
 package com.example.myfood.myfoodapi.domain.service;
 
+import javax.transaction.Transactional;
+
 import com.example.myfood.myfoodapi.domain.exception.EntidadeEmUsoException;
 import com.example.myfood.myfoodapi.domain.exception.EstadoNaoEncontradoException;
 import com.example.myfood.myfoodapi.domain.model.Estado;
@@ -18,10 +20,12 @@ public class CadastroEstadoService {
 	@Autowired
 	private EstadoRepository estadoRepository;
 
+	@Transactional
 	public Estado salvar(Estado estado) {
 		return estadoRepository.save(estado);
 	}
-
+	
+	@Transactional
 	public void excluir(Long estadoId) {
 		try {
 			estadoRepository.deleteById(estadoId);

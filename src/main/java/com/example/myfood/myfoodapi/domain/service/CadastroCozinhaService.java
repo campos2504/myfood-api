@@ -1,5 +1,7 @@
 package com.example.myfood.myfoodapi.domain.service;
 
+import javax.transaction.Transactional;
+
 import com.example.myfood.myfoodapi.domain.exception.CozinhaNaoEncontradaException;
 import com.example.myfood.myfoodapi.domain.exception.EntidadeEmUsoException;
 import com.example.myfood.myfoodapi.domain.model.Cozinha;
@@ -23,6 +25,7 @@ public class CadastroCozinhaService {
 
     }
 
+    @Transactional
     public void excluir(Long cozinhaId) {
         try {
             cozinhaRepository.deleteById(cozinhaId);
@@ -38,6 +41,7 @@ public class CadastroCozinhaService {
 
     }
 
+    
     public Cozinha buscarOuFalhar(Long cozinhaId) {
 
         return cozinhaRepository.findById(cozinhaId)
