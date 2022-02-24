@@ -2,6 +2,8 @@ package com.example.myfood.myfoodapi.api.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import com.example.myfood.myfoodapi.domain.exception.CozinhaNaoEncontradaException;
 import com.example.myfood.myfoodapi.domain.exception.NegocioException;
 import com.example.myfood.myfoodapi.domain.model.Restaurante;
@@ -43,7 +45,7 @@ public class RestauranteController {
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public Restaurante adicionar(@RequestBody Restaurante restaurante) {
+	public Restaurante adicionar(@RequestBody @Valid Restaurante restaurante) {
 		try {
 			return cadastroRestaurante.salvar(restaurante);
 		} catch (CozinhaNaoEncontradaException e) {
@@ -52,7 +54,7 @@ public class RestauranteController {
 	}
 	
 	@PutMapping("/{restauranteId}")
-	public Restaurante atualizar(@PathVariable Long restauranteId,
+	public Restaurante atualizar(@PathVariable @Valid Long restauranteId,
 			@RequestBody Restaurante restaurante) {
 		try {
 			Restaurante restauranteAtual = cadastroRestaurante.buscarOuFalhar(restauranteId);

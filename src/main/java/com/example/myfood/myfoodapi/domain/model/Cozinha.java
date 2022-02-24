@@ -6,9 +6,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
+import com.example.myfood.myfoodapi.Groups;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -18,14 +19,15 @@ import lombok.EqualsAndHashCode;
 @Data//gerar getters and setter
 public class Cozinha {
 
-    @Id
-    @EqualsAndHashCode.Include//parametro explicito para equals e hashcode
-    @GeneratedValue(strategy = GenerationType.IDENTITY)//Como o id sera gerado / Identity passa a resposabilidade para o bd
-    private Long id;
-
-
-    @JsonProperty("titulo")
-    @Column(nullable = false)
-    private String nome;
+    
+	@NotNull(groups = Groups.CozinhaId.class)
+	@EqualsAndHashCode.Include
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+	
+	@NotBlank
+	@Column(nullable = false)
+	private String nome;
 
 }

@@ -2,6 +2,8 @@ package com.example.myfood.myfoodapi.api.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import com.example.myfood.myfoodapi.domain.model.Estado;
 import com.example.myfood.myfoodapi.domain.repository.EstadoRepository;
 import com.example.myfood.myfoodapi.domain.service.CadastroEstadoService;
@@ -42,12 +44,12 @@ public class EstadoController {
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public Estado adicionar(@RequestBody Estado estado) {
+	public Estado adicionar(@RequestBody @Valid Estado estado) {
 		return cadastroEstado.salvar(estado);
 	}
 	
 	@PutMapping("/{estadoId}")
-	public Estado atualizar(@PathVariable Long estadoId,
+	public Estado atualizar(@PathVariable @Valid Long estadoId,
 			@RequestBody Estado estado) {
 		Estado estadoAtual = cadastroEstado.buscarOuFalhar(estadoId);
 		

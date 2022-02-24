@@ -2,6 +2,8 @@ package com.example.myfood.myfoodapi.api.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import com.example.myfood.myfoodapi.domain.exception.EntidadeNaoEncontradaException;
 import com.example.myfood.myfoodapi.domain.exception.NegocioException;
 import com.example.myfood.myfoodapi.domain.model.Cidade;
@@ -44,7 +46,7 @@ public class CidadeController {
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public Cidade adicionar(@RequestBody Cidade cidade) {
+	public Cidade adicionar(@RequestBody @Valid Cidade cidade) {
 		try {
 			return cadastroCidade.salvar(cidade);
 
@@ -55,7 +57,7 @@ public class CidadeController {
 
 
 	@PutMapping("/{cidadeId}")
-	public Cidade atualizar(@PathVariable Long cidadeId,
+	public Cidade atualizar(@PathVariable @Valid Long cidadeId,
 			@RequestBody Cidade cidade) {
 		Cidade cidadeAtual = cadastroCidade.buscarOuFalhar(cidadeId);
 

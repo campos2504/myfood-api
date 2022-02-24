@@ -2,6 +2,8 @@ package com.example.myfood.myfoodapi.api.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import com.example.myfood.myfoodapi.domain.model.Cozinha;
 import com.example.myfood.myfoodapi.domain.repository.CozinhaRepository;
 import com.example.myfood.myfoodapi.domain.service.CadastroCozinhaService;
@@ -41,12 +43,12 @@ public class CozinhaController {
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public Cozinha adicionar(@RequestBody Cozinha cozinha) {
+	public Cozinha adicionar(@RequestBody @Valid Cozinha cozinha) {
 		return cadastroCozinha.salvar(cozinha);
 	}
 	
 	@PutMapping("/{cozinhaId}")
-	public Cozinha atualizar(@PathVariable Long cozinhaId,
+	public Cozinha atualizar(@PathVariable @Valid Long cozinhaId,
 			@RequestBody Cozinha cozinha) {
 		Cozinha cozinhaAtual = cadastroCozinha.buscarOuFalhar(cozinhaId);
 		
