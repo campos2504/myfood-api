@@ -16,16 +16,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.PositiveOrZero;
-import javax.validation.groups.ConvertGroup;
-import javax.validation.groups.Default;
-
-import com.example.myfood.myfoodapi.Groups;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -47,32 +37,31 @@ public class Restaurante {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@NotBlank
+	
 	@Column(nullable = false)
 	private String nome;
 	
-	@PositiveOrZero
+	
 	@Column(name = "taxa_frete", nullable = false)
 	private BigDecimal taxaFrete;
-	
 
-	@JsonIgnoreProperties(value="nome", allowGetters = true)
-	@Valid
-	@ConvertGroup(from = Default.class, to = Groups.CozinhaId.class)
-	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "cozinha_id", nullable = false)
 	private Cozinha cozinha;
-    @JsonIgnore
+
+    
     @Embedded
     private Endereco endereco;
 
-    @JsonIgnore
+	@Column(nullable = false)
+	private boolean ativo=Boolean.TRUE;
+
+    
     @CreationTimestamp
     @Column(nullable = false)
     private OffsetDateTime dataCadastro;
 
-    @JsonIgnore
+   
     @UpdateTimestamp
     @Column(nullable = false)
     private OffsetDateTime dataAtualizacao;
@@ -83,8 +72,18 @@ public class Restaurante {
     inverseJoinColumns =  @JoinColumn(name = "forma_pagamento_id"))
     private List<FormaPagamento> formasPagamento= new ArrayList<>();
 
-    @JsonIgnore
+    
 	@OneToMany(mappedBy = "restaurante")
 	private List<Produto> produtos = new ArrayList<>();
+
+
+    public void ativar() {
+		setAtivo(true);
+    }
+
+
+    public void inativar() {
+		setAtivo(false);
+    }
 
 }
