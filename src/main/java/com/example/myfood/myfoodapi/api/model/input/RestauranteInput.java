@@ -3,7 +3,6 @@ package com.example.myfood.myfoodapi.api.model.input;
 import java.math.BigDecimal;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 
@@ -15,8 +14,6 @@ import lombok.Setter;
 @Getter
 public class RestauranteInput {
     
-    @NotBlank
-    private Long id;
 
     @NotNull
     private String nome;
@@ -28,6 +25,10 @@ public class RestauranteInput {
     @Valid
     @NotNull
     private CozinhaIdInput cozinha;
+
+    @Valid
+	@NotNull
+	private EnderecoInput endereco;
 
 
 }

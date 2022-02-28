@@ -3,6 +3,7 @@ package com.example.myfood.myfoodapi.domain.service;
 import javax.transaction.Transactional;
 
 import com.example.myfood.myfoodapi.domain.exception.RestauranteNaoEncontradoException;
+import com.example.myfood.myfoodapi.domain.model.Cidade;
 import com.example.myfood.myfoodapi.domain.model.Cozinha;
 import com.example.myfood.myfoodapi.domain.model.Restaurante;
 import com.example.myfood.myfoodapi.domain.repository.RestauranteRepository;
@@ -18,14 +19,20 @@ public class CadastroRestauranteService {
 	
 	@Autowired
 	private CadastroCozinhaService cadastroCozinha;
+
+	@Autowired
+	private CadastroCidadeService cadastroCidade;
 	
 	@Transactional
 	public Restaurante salvar(Restaurante restaurante) {
 		Long cozinhaId = restaurante.getCozinha().getId();
-		
+		Long cidadeId = restaurante.getEndereco().getCidade().getId();
+
 		Cozinha cozinha = cadastroCozinha.buscarOuFalhar(cozinhaId);
+		Cidade cidade = cadastroCidade.buscarOuFalhar(cidadeId);
 		
 		restaurante.setCozinha(cozinha);
+		restaurante.getEndereco().setCidade(cidade);
 		
 		return restauranteRepository.save(restaurante);
 	}
